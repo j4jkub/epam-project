@@ -1,11 +1,17 @@
 from pydantic import BaseModel
 
 class UserCreate(BaseModel):
-    username : str
-    bio : str
-    email : str
+    username: str
+    email: str | None = None
     password: str
-    repeat_password : str
+    repeat_password: str
 
-class UserRequest(BaseModel):
-    pass
+
+class UserResponse(BaseModel):
+    id: int
+    username: str
+
+class AuthenticatedUser(BaseModel):
+    id: int
+    username: str
+

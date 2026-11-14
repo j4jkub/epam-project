@@ -1,14 +1,20 @@
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Enum as SQLEnum
-from backend.db.database import Base
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey, Enum as SQLEnum
+from sqlalchemy.sql import func
+from sqlalchemy.orm import Mapped, mapped_column
+from backend.dependencies.database import Base
+from datetime import datetime
 import enum
 
 class User(Base):
     __tablename__ = "users"
-    id = Column(Integer, primary_key=True, index=True)
-    username = Column(String, index=True)
-    email = Column(String, unique=True, index=True)
-    hashed_password = Column(String)
-    is_active = Column(Boolean, default=True)
+    id : Mapped[int] = mapped_column(
+        primary_key=True,
+        index=True
+    )
+    username: Mapped[str] = mapped_column( index=True, unique=True )
+    hashed_password: Mapped[str] = mapped_column()
+    is_active: Mapped[bool] = mapped_column( default=True )
+    created_at: Mapped[datetime] = mapped_column( DateTime, default=datetime.now ) 
 
 class AccessType(enum.Enum):
     OWNER = "owner"
@@ -16,7 +22,10 @@ class AccessType(enum.Enum):
 
 class ProjectAccess(Base):
     __tablename__ = "project_access"
-    id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"))
-    project_id = Column(Integer, ForeignKey("projects.id"))
-    access_level = Column(SQLEnum(AccessType))
+    id : Mapped[int] = mapped_column(
+        primary_key=True,
+        index=True
+    )
+    user_id : Mapped[int] = mapped_column( ForeignKey( "users.id" ) )
+    project_id : Mapped[int] = mapped_column( ForeignKey("projects.id", ondelete="CASCADE") )
+    access_type : Mapped[AccessType] = mapped_column( SQLEnum(AccessType) )

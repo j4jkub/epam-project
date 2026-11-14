@@ -1,41 +1,90 @@
 from fastapi import APIRouter
-from backend.db.database import db_dependency
+
+from backend.dependencies.database import db_dependency
+from backend.dependencies.auth import auth_dependency
+from backend.dependencies.project_access import require_project_owner, require_project_participant
+
 from backend.services.project_service import ProjectService
-from backend.schemas.project_schema import ProjectCreate
+from backend.services.user_service import UserService
 from backend.services.project_service import ProjectService
+
+from backend.schemas.project_schema import ProjectCreate, ProjectUpdate
+
 
 project_router = APIRouter()
 project_service = ProjectService()
+user_service = UserService()
 
 
 @project_router.post("/projects")
-def create_project(project : ProjectCreate, db: db_dependency):
-    return project_service.create_project(project=project, db=db)
+def create_project(project : ProjectCreate, authicated_user: auth_dependency, db: db_dependency):
+    return project_service.create(project=project, db=db, user=authicated_user)
 
-@project_router.get("/project")
-def get_all_projects(db: db_dependency):
-    pass
+@project_router.get("/projects")
+def get_all_projects(authicated_user: auth_dependency, db: db_dependency):
+    return project_service.list_user_projects_info(authicated_user, db)
 
 @project_router.get("/project/{project_id}/info")
-def get_project_info(project_id, db: db_dependency):
-    pass
+def get_project_info(project_id, authicated_user: auth_dependency, db: db_dependency):
+    return project_service.get_project_info(authicated_user, project_id, db)
 
 @project_router.put("/project/{project_id}/info")
-def update_project_info(project_id, db: db_dependency):
-    pass
+def update_project_info(
+    project_id,
+    project_update: ProjectUpdate,
+    authicated_user: auth_dependency,
+    db: db_dependency,
+    access: require_project_participant
+):
+    return project_service.update_project(project_id, project_update, authicated_user , db)
+    
 
 @project_router.delete("/project/{project_id}")
-def delete_project(project_id, db: db_dependency):
-    pass
+def delete_project(
+    project_id,
+    authicated_user: auth_dependency,
+    db: db_dependency,
+    access: require_project_owner
+):
+    return project_service.delete(authicated_user, project_id, db)
 
-@project_router.get("/project/{project_id}/documents")
-def get_project_documents(project_id, db: db_dependency):
-    pass
 
-@project_router.post("/project/{project_id}/")
-def invite_user_to_project(project_id, user, db: db_dependency):
-    pass
+@project_router.post("/project/{project_id}/invite")
+def invite_user_to_project(
+    project_id: int,
+    user: str,
+    authicated_user: auth_dependency,
+    db: db_dependency,
+    access: require_project_owner
+):
+    return project_service.add_participant(
+        project_id=project_id,
+        user=user,
+        db=db
+    )
+
+@project_router.delete("/project/{project_id}/invite")
+def remove_participant_from_project(
+    project_id: int,
+    user: str,
+    authicated_user: auth_dependency,
+    db: db_dependency,
+    access: require_project_participant
+):
+    return project_service.remove_participant(
+        project_id=project_id,
+        username=user,
+        atuhenticated_user_access=access,
+        atuhenticated_user=authicated_user,
+        db=db
+    )
 
 @project_router.get("/project/{project_id}/")
-def send_project_email_invite(project_id, user, db: db_dependency):
+def send_project_email_invite(
+    project_id,
+    username,
+    authicated_user: auth_dependency,
+    db: db_dependency,
+    access: require_project_participant
+):
     pass

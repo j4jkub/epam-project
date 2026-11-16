@@ -10,7 +10,7 @@ from pydantic import BaseModel
 import jwt
 
 from backend.schemas.token_schema import Token, TokenData
-from backend.schemas.user_schema import UserResponse
+from backend.schemas.user_schema import AuthenticatedUser
 from backend.dependencies.database import db_dependency
 from backend.models.user import User
 
@@ -83,13 +83,13 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db : d
 
 
 async def get_current_active_user(
-    current_user : Annotated[UserResponse, Depends(get_current_user)],
+    current_user : Annotated[AuthenticatedUser, Depends(get_current_user)],
 ):
     # if not current_user.is_active:
         # raise HTTPException(status_code=400, detail="Inactive user")
-    return UserResponse(
+    return AuthenticatedUser(
         id=current_user.id,
         username=current_user.username
     )
 
-auth_dependency = Annotated[UserResponse, Depends(get_current_user)]
+auth_dependency = Annotated[AuthenticatedUser, Depends(get_current_user)]

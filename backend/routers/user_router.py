@@ -20,7 +20,7 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
 
 @user_router.post("/auth")
-async def register_user(user: UserCreate, db : db_dependency):
+async def register_user(user: UserCreate, db : db_dependency) -> Response:
     return user_service.create_user(
         user = user,
         db = db
@@ -28,7 +28,7 @@ async def register_user(user: UserCreate, db : db_dependency):
 
 
 @user_router.get("/user/{username}")
-def get_user(username: str, db: db_dependency):
+def get_user(username: str, db: db_dependency) -> UserResponse:
     return user_service.get_user_by_username(username, db)
 
 @user_router.post("/token")

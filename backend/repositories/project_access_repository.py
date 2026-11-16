@@ -33,10 +33,11 @@ class ProjectAccessRepository():
     def delete(self, access: ProjectAccess, db : Session):
         db.delete(access)
         db.commit()
+        return access
 
     def get_project_members(self, project_id: int, db: Session):
         return (
-            self.db.query(ProjectAccess)
+            db.query(ProjectAccess)
             .filter(ProjectAccess.project_id == project_id)
             .all()
         )

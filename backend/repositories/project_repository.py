@@ -8,18 +8,10 @@ from backend.models.user import User, ProjectAccess, AccessType
 
 
 class ProjectRepository:
-    def create(self, project: ProjectCreate, db: Session) -> Project:
-
-        
-        new_project = Project(
-            name = project.name,
-            description = project.description
-        )
-
-        db.add(new_project)
+    def create(self, project: Project, db: Session) -> Project:
+        db.add(project)
         db.commit()
-        
-        return new_project
+        return project
 
     def delete(self, project_id: int, db: Session):
         project = db.scalars(
@@ -29,11 +21,9 @@ class ProjectRepository:
         if project is None:
             raise HTTPException(status_code=404, detail="User not found")
 
-
         db.delete(project)
         db.commit()
-
-
+        return project
 
     def get_owner(self, project_id : int, db : Session) -> User:
         return db.query(User).join(ProjectAccess, ProjectAccess.user_id == User.id).filter(
@@ -47,18 +37,17 @@ class ProjectRepository:
             ProjectAccess.access_type == AccessType.PARTICIPANT
         ).all()
 
-    def update(self, project_update: ProjectUpdate, db: Session) -> Project:
+    def update(self, project_id: int, project_update: ProjectUpdate, db: Session) -> Project:
         project = db.scalar(
-            select(Project).where(Project.id == project_update.id)
+            select(Project).where(Project.id == project_id)
         )
 
-        project.name = project_update if project_update.name is not None else project.name
-        project.description = project_update if project_update.description is not None else project.name
+        project.name = project_update.name if project_update is not None else project.name
+        project.description = project_update.description if project_update is not None else project.description
 
         db.commit()
 
         return project
-
 
     def get_by_id(self, id: int, db: Session) -> Project:
         return db.scalar(
@@ -74,24 +63,12 @@ class ProjectRepository:
         if access_type is not None:
             projects_access = projects_access.filter(ProjectAccess.access_type == access_type)
 
-
         projects_ids = [p.project_id for p in projects_access.all()]
         projects = db.query(Project).filter(Project.id.in_(projects_ids)).all()
 
         return projects
         
-    def create_project_access(self, user_id, project_id, access_type : AccessType, db: Session) -> ProjectAccess:
-        current_access =  db.query(ProjectAccess).filter(ProjectAccess.project_id == project_id, ProjectAccess.user_id == user_id).first()
-        if current_access:
-            return Response('Access already exists', 401)
-        
-        project_access = ProjectAccess(
-            project_id = project_id,
-            user_id = user_id,
-            access_type = access_type
-        )
-
+    def create_project_access(self, project_access: ProjectAccess, db: Session) -> ProjectAccess:
         db.add(project_access)
         db.commit()
-        
         return project_access

@@ -31,7 +31,9 @@ class UserService:
             is_active=True
         )
         
-        return self.user_repository.create(new_user, db)
+        self.user_repository.create(new_user, db)
+
+        return Response(status_code=200, content="User created")
 
     def get_access_token(
         self,

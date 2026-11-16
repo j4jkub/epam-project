@@ -12,6 +12,7 @@ import shutil
 class DocumentService:
     def __init__(self):
         self.UPLOAD_PATH = 'uploads'
+        self.MAX_FILE_SIZE = 50 * 1024 * 1024
         self.document_repository = DocumentRepository()
         self.project_repository = ProjectRepository()
             
@@ -54,14 +55,16 @@ class DocumentService:
         if not document or document.project_id != project_id:
             raise HTTPException(404, "File not found")
 
-    def download_project_file(self, document_id: int, project_id: int, db: Session):
+    def download_project_file(self, document_id: int, db: Session):
         document = self.document_repository.get_by_id(
             document_id = document_id,
             db = db
         )
-
-        if not document or document.project_id != project_id:
+        if not document :
             raise HTTPException(404, "File not found")
+
+        # if not document or document.project_id != project_id:
+            # raise HTTPException(404, "File not found")
 
         return FileResponse(
             path=document.file_path,
@@ -69,7 +72,7 @@ class DocumentService:
             media_type=document.content_type
         )
 
-    def get_project_files(self, project_id, db : Session) -> list[Document]:
+    def get_project_files(self, project_id, db : Session) -> list[DocumentResponse]:
         documents = self.document_repository.get_project_documents_list(
             project_id=project_id,
             db=db

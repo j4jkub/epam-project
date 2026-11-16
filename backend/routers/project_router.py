@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Response
 
 from backend.dependencies.database import db_dependency
 from backend.dependencies.auth import auth_dependency
@@ -8,7 +8,8 @@ from backend.services.project_service import ProjectService
 from backend.services.user_service import UserService
 from backend.services.project_service import ProjectService
 
-from backend.schemas.project_schema import ProjectCreate, ProjectUpdate
+
+from backend.schemas.project_schema import ProjectCreate, ProjectUpdate, ProjectDetailsResponse
 
 
 project_router = APIRouter()
@@ -17,15 +18,15 @@ user_service = UserService()
 
 
 @project_router.post("/projects")
-def create_project(project : ProjectCreate, authicated_user: auth_dependency, db: db_dependency):
+def create_project(project : ProjectCreate, authicated_user: auth_dependency, db: db_dependency) -> ProjectDetailsResponse:
     return project_service.create(project=project, db=db, user=authicated_user)
 
 @project_router.get("/projects")
-def get_all_projects(authicated_user: auth_dependency, db: db_dependency):
+def get_all_projects(authicated_user: auth_dependency, db: db_dependency) -> list[ProjectDetailsResponse]:
     return project_service.list_user_projects_info(authicated_user, db)
 
 @project_router.get("/project/{project_id}/info")
-def get_project_info(project_id, authicated_user: auth_dependency, db: db_dependency):
+def get_project_info(project_id, authicated_user: auth_dependency, db: db_dependency) -> ProjectDetailsResponse:
     return project_service.get_project_info(authicated_user, project_id, db)
 
 @project_router.put("/project/{project_id}/info")
@@ -35,7 +36,7 @@ def update_project_info(
     authicated_user: auth_dependency,
     db: db_dependency,
     access: require_project_participant
-):
+) -> ProjectDetailsResponse:
     return project_service.update_project(project_id, project_update, authicated_user , db)
     
 
@@ -45,7 +46,7 @@ def delete_project(
     authicated_user: auth_dependency,
     db: db_dependency,
     access: require_project_owner
-):
+) -> Response:
     return project_service.delete(authicated_user, project_id, db)
 
 
@@ -56,7 +57,7 @@ def invite_user_to_project(
     authicated_user: auth_dependency,
     db: db_dependency,
     access: require_project_owner
-):
+) -> Response:
     return project_service.add_participant(
         project_id=project_id,
         user=user,
@@ -70,7 +71,7 @@ def remove_participant_from_project(
     authicated_user: auth_dependency,
     db: db_dependency,
     access: require_project_participant
-):
+) -> Response:
     return project_service.remove_participant(
         project_id=project_id,
         username=user,

@@ -4,7 +4,7 @@
 .mypy_cache
 .vscode
 __pycache__
-backend/__pycache__
+database_dev
 .pytest_cache
 htmlcov
 dist
@@ -24,4 +24,10 @@ venv
 docs.zip
 archive.zip
 
-frontend
+frontend/node_modules
+frontend/dist
+frontend/.env
+frontend/server/data
+
+# frontend
+/backend/uploads

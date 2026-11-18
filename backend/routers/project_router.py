@@ -26,23 +26,28 @@ def get_all_projects(authicated_user: auth_dependency, db: db_dependency) -> lis
     return project_service.list_user_projects_info(authicated_user, db)
 
 @project_router.get("/project/{project_id}/info")
-def get_project_info(project_id, authicated_user: auth_dependency, db: db_dependency) -> ProjectDetailsResponse:
+def get_project_info(
+    project_id: int,
+    access: require_project_participant,
+    authicated_user: auth_dependency,
+    db: db_dependency,
+    ) -> ProjectDetailsResponse:
     return project_service.get_project_info(authicated_user, project_id, db)
 
 @project_router.put("/project/{project_id}/info")
 def update_project_info(
-    project_id,
+    project_id: int,
     project_update: ProjectUpdate,
+    access: require_project_participant,
     authicated_user: auth_dependency,
     db: db_dependency,
-    access: require_project_participant
 ) -> ProjectDetailsResponse:
     return project_service.update_project(project_id, project_update, authicated_user , db)
     
 
 @project_router.delete("/project/{project_id}")
 def delete_project(
-    project_id,
+    project_id: int,
     authicated_user: auth_dependency,
     db: db_dependency,
     access: require_project_owner
@@ -82,7 +87,7 @@ def remove_participant_from_project(
 
 @project_router.get("/project/{project_id}/")
 def send_project_email_invite(
-    project_id,
+    project_id: int,
     username,
     authicated_user: auth_dependency,
     db: db_dependency,

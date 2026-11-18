@@ -17,13 +17,17 @@ class DocumentService:
         self.project_repository = ProjectRepository()
             
     def upload_file(self, project_id : int, file : UploadFile, db : Session):
+        if file.size >  self.MAX_FILE_SIZE:
+            raise HTTPException(422, "File is too big")
+
         project = self.project_repository.get_by_id(
             id=project_id,
             db=db
         )
 
         if not project: 
-            return HTTPException(404, "Project not found")
+            raise HTTPException(404, "Project not found")
+
 
         filename = project.name + file.filename
         dir_path = os.path.join(self.UPLOAD_PATH, project.name)
@@ -46,14 +50,56 @@ class DocumentService:
 
         return self.document_repository.create(document, db)
 
-    def delete_file(self, document_id: int, project_id: int, db: Session):
+    def update_file(self, document_id: int, file : UploadFile, db: Session):
+        document = self.document_repository.get_by_id(
+            document_id=document_id,
+            db=db
+        )
+
+        project = self.project_repository.get_by_id(
+            id=document.project_id,
+            db=db
+        )
+
+        if not project: 
+            return HTTPException(404, "Project not found")
+
+        filename = project.name + file.filename
+        dir_path = os.path.join(self.UPLOAD_PATH, project.name)
+        os.makedirs(dir_path, exist_ok=True)
+        
+        file_path = os.path.join(
+            dir_path,
+            filename
+        )
+
+        with open(file_path, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+
+        document
+
+    def delete_file(
+            self,
+            document_id: int,
+            db: Session
+    ):
         document = self.document_repository.get_by_id(
             document_id = document_id,
             db = db
         )
 
-        if not document or document.project_id != project_id:
+        if not document or document.project_id != document.project_id:
             raise HTTPException(404, "File not found")
+
+        self.document_repository.delete(
+            document = document,
+            db = db
+        )
+
+        # if document.file_path and os.path.exists(document.file_path):
+        #     os.remove(document.file_path)
+
+        return document
 
     def download_project_file(self, document_id: int, db: Session):
         document = self.document_repository.get_by_id(
@@ -62,9 +108,6 @@ class DocumentService:
         )
         if not document :
             raise HTTPException(404, "File not found")
-
-        # if not document or document.project_id != project_id:
-            # raise HTTPException(404, "File not found")
 
         return FileResponse(
             path=document.file_path,

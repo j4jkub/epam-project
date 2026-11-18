@@ -14,8 +14,9 @@ from backend.schemas.user_schema import AuthenticatedUser
 from backend.dependencies.database import db_dependency
 from backend.models.user import User
 
+import os
 
-SECRET_KEY = "3c76d101037cd4047c1b096c26d740a1d1a546a3c6f58ff6e508a0354ea6594b"
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30

@@ -31,3 +31,7 @@ frontend/server/data
 
 # frontend
 /backend/uploads
+
+env.dev
+env.dev.db
+docker-compose.yml

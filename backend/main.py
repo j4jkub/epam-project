@@ -1,20 +1,25 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from .routers.document_router import document_router
-from .routers.user_router import user_router
-from .routers.project_router import project_router
-from .dependencies.database import engine, Base
+from backend.routers.document_router import document_router
+from backend.routers.user_router import user_router
+from backend.routers.project_router import project_router
+from backend.dependencies.database import engine, Base
 
 
 app = FastAPI()
-app.include_router(document_router, tags=['documents'])
-app.include_router(project_router, tags=['project'])
-app.include_router(user_router, tags=['users'])
+app.include_router(prefix="/api", router=document_router, tags=['documents'])
+app.include_router(prefix="/api", router=project_router, tags=['project'])
+app.include_router(prefix="/api", router=user_router, tags=['users'])
 
 
 
-origins = ['http://localhost:5173', 'https://localhost:5173']
+origins = [
+    "http://localhost:5173",
+    "http://localhost",
+    "http://127.0.0.1:5173",
+    "http://127.0.0.1",
+]
 
 app.add_middleware(
     CORSMiddleware,

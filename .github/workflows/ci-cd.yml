@@ -11,52 +11,52 @@ permissions:
   packages: write
 
 jobs:
-  # test:
-  #   name: Test and lint
-  #   runs-on: ubuntu-latest
-
-  #   steps:
-  #     - name: Checkout repository
-  #       uses: actions/checkout@v4
-
-  #     - name: Setup Python
-  #       uses: actions/setup-python@v5
-  #       with:
-  #         python-version: "3.12"
-
-  #     - name: Install dependencies
-  #       run: |
-  #         pip install -r requirements-dev.txt
-
-  #     - name: Run linting
-  #       run: ruff check .
-
-  #     - name: Run tests
-  #       run: pytest -v
-
-  build:
-    name: Build Docker image
-    needs: test
+  test:
+    name: Test and lint
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Build Docker image
-        run: |
-          docker build -t fastapi-app .
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
 
-      - name: Login to GHCR
-        if: github.event_name == 'push'
+      - name: Install dependencies
         run: |
-          echo "${{ secrets.GITHUB_TOKEN }}" | \
-          docker login ghcr.io \
-          -u "${{ github.actor }}" --password-stdin
+          pip install -r requirements-dev.txt
 
-      - name: Push Docker image
-        if: github.event_name == 'push'
-        run: |
-          IMAGE="ghcr.io/${GITHUB_REPOSITORY,,}"
-          docker tag fastapi-app "$IMAGE:${GITHUB_SHA}"
-          docker push "$IMAGE:${GITHUB_SHA}"
+      - name: Run linting
+        run: ruff check .
+
+      - name: Run tests
+        run: pytest -v
+
+  # build:
+  #   name: Build Docker image
+  #   needs: test
+  #   runs-on: ubuntu-latest
+
+  #   steps:
+  #     - name: Checkout repository
+  #       uses: actions/checkout@v4
+
+  #     - name: Build Docker image
+  #       run: |
+  #         docker build -t fastapi-app .
+
+  #     - name: Login to GHCR
+  #       if: github.event_name == 'push'
+  #       run: |
+  #         echo "${{ secrets.GITHUB_TOKEN }}" | \
+  #         docker login ghcr.io \
+  #         -u "${{ github.actor }}" --password-stdin
+
+  #     - name: Push Docker image
+  #       if: github.event_name == 'push'
+  #       run: |
+  #         IMAGE="ghcr.io/${GITHUB_REPOSITORY,,}"
+  #         docker tag fastapi-app "$IMAGE:${GITHUB_SHA}"
+  #         docker push "$IMAGE:${GITHUB_SHA}"

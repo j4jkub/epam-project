@@ -1,12 +1,17 @@
-from backend.models.user import User
-from backend.schemas.user_schema import UserCreate
-from backend.repositories.user_repository import UserRepository
-from fastapi import Depends, HTTPException, status, APIRouter, Response
-from sqlalchemy.orm import Session
-from backend.schemas.token_schema import Token
-from backend.dependencies.auth import get_password_hash, authenticate_user, create_access_token, get_current_active_user
-from fastapi.security import OAuth2PasswordRequestForm
 from datetime import timedelta
+
+from fastapi import HTTPException, Response, status
+from fastapi.security import OAuth2PasswordRequestForm
+from sqlalchemy.orm import Session
+
+from backend.dependencies.auth import (
+    authenticate_user,
+    create_access_token,
+    get_password_hash,
+)
+from backend.models.user import User
+from backend.repositories.user_repository import UserRepository
+from backend.schemas.token_schema import Token
 from backend.schemas.user_schema import UserCreate, UserResponse
 
 

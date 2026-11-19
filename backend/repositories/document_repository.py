@@ -1,8 +1,8 @@
-from backend.models.document import Document
-from backend.schemas.document_schema import DocumentUpdate
-from fastapi import APIRouter
-from sqlalchemy.orm import Session
 from sqlalchemy import Select
+from sqlalchemy.orm import Session
+
+from backend.models.document import Document
+
 
 class DocumentRepository:
     def create(self, document: Document, db: Session) -> Document:

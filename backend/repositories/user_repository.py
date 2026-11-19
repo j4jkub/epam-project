@@ -1,8 +1,7 @@
-from backend.dependencies.database import db_dependency
-from backend.models.user import User
-from backend.schemas.user_schema import UserCreate, UserResponse
 from sqlalchemy.orm import Session
-from fastapi import Response
+
+from backend.models.user import User
+
 
 class UserRepository:
     def create(self, user: User, db: Session):

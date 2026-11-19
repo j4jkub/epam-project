@@ -1,13 +1,12 @@
 from fastapi import APIRouter, UploadFile
 from fastapi.responses import FileResponse, Response
 
-from backend.schemas.document_schema import DocumentResponse
-from backend.services.document_service import DocumentService
 from backend.dependencies.auth import auth_dependency
 from backend.dependencies.database import db_dependency
-from backend.dependencies.project_access import require_project_owner, require_project_participant
 from backend.dependencies.document_access import doc_require_project_participant
-
+from backend.dependencies.project_access import require_project_participant
+from backend.schemas.document_schema import DocumentResponse
+from backend.services.document_service import DocumentService
 
 document_router = APIRouter()
 document_service = DocumentService()

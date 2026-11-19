@@ -1,13 +1,17 @@
-from fastapi import Response, HTTPException
+from fastapi import HTTPException, Response
 from sqlalchemy.orm import Session
 
 from backend.models.project import Project
 from backend.models.user import AccessType, ProjectAccess
-from backend.schemas.project_schema import ProjectCreate, ProjectUpdate, ProjectDetailsResponse
-from backend.schemas.user_schema import UserResponse, AuthenticatedUser
-from backend.repositories.project_repository import ProjectRepository
 from backend.repositories.project_access_repository import ProjectAccessRepository
+from backend.repositories.project_repository import ProjectRepository
 from backend.repositories.user_repository import UserRepository
+from backend.schemas.project_schema import (
+    ProjectCreate,
+    ProjectDetailsResponse,
+    ProjectUpdate,
+)
+from backend.schemas.user_schema import UserResponse
 
 
 class ProjectService:
@@ -59,7 +63,7 @@ class ProjectService:
                 UserResponse(id=u.id, username=u.username)
                 for u in participants
             ],
-            is_owner=(True if owner.id==authicated_user.id else False)
+            is_owner=owner.id==authicated_user.id
         )
 
     def update_project(
@@ -101,7 +105,7 @@ class ProjectService:
                         UserResponse(id=u.id, username=u.username)
                         for u in participants
                     ],
-                    is_owner=(True if owner.id==user.id else False)
+                    is_owner=owner.id==user.id
                 )
             )
         return responses

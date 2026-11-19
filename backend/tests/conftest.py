@@ -1,18 +1,17 @@
 
-import pytest
+import uuid
 
-from testcontainers.community.postgres import PostgresContainer
+import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from testcontainers.community.postgres import PostgresContainer
 
 from backend.dependencies.database import Base, get_db
 from backend.main import app as fastapi_app
-
 from backend.models.document import Document
 from backend.models.project import Project
 
-import uuid
 
 @pytest.fixture(scope="session")
 def postgres():

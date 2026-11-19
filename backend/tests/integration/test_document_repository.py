@@ -1,7 +1,8 @@
-from backend.repositories.document_repository import DocumentRepository
-from backend.models.document import Document
-
 import pytest
+
+from backend.models.document import Document
+from backend.repositories.document_repository import DocumentRepository
+
 
 @pytest.fixture
 def document_repository():

@@ -1,13 +1,9 @@
-from backend.dependencies.database import db_dependency, get_db
-from backend.models.project import Project
-from backend.schemas.project_schema import ProjectCreate, ProjectUpdate, ProjectDetailsResponse
 from sqlalchemy.orm import Session
-from sqlalchemy import select
-from fastapi import Response, HTTPException
-from backend.models.user import User, ProjectAccess, AccessType
+
+from backend.models.user import ProjectAccess
 
 
-class ProjectAccessRepository():
+class ProjectAccessRepository:
 
     def get_user_access(
         self,

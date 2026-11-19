@@ -1,10 +1,10 @@
-from backend.dependencies.database import db_dependency
-from backend.models.project import Project
-from backend.schemas.project_schema import ProjectCreate, ProjectUpdate, ProjectDetailsResponse
-from sqlalchemy.orm import Session
+from fastapi import HTTPException
 from sqlalchemy import select
-from fastapi import Response, HTTPException
-from backend.models.user import User, ProjectAccess, AccessType
+from sqlalchemy.orm import Session
+
+from backend.models.project import Project
+from backend.models.user import AccessType, ProjectAccess, User
+from backend.schemas.project_schema import ProjectUpdate
 
 
 class ProjectRepository:

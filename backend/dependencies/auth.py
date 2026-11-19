@@ -1,20 +1,17 @@
-from datetime import datetime, timedelta, timezone
+import os
+from datetime import UTC, datetime, timedelta
 from typing import Annotated
 
-from fastapi import Depends, FastAPI, HTTPException, status, APIRouter, Response
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+import jwt
+from fastapi import Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
 from jwt.exceptions import InvalidTokenError
 from pwdlib import PasswordHash
-from pydantic import BaseModel
 
-import jwt
-
-from backend.schemas.token_schema import Token, TokenData
-from backend.schemas.user_schema import AuthenticatedUser
 from backend.dependencies.database import db_dependency
 from backend.models.user import User
-
-import os
+from backend.schemas.token_schema import TokenData
+from backend.schemas.user_schema import AuthenticatedUser
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 
@@ -51,9 +48,9 @@ def authenticate_user(username: str, password: str, db : db_dependency):
 def create_access_token(data: dict, expires_delta: timedelta | None = None):
     to_encode = data.copy()
     if expires_delta:
-        expire = datetime.now(timezone.utc) + expires_delta
+        expire = datetime.now(UTC) + expires_delta
     else:
-        expire = datetime.now(timezone.utc) + timedelta(minutes=15)
+        expire = datetime.now(UTC) + timedelta(minutes=15)
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt

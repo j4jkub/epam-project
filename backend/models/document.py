@@ -1,9 +1,10 @@
-from datetime import datetime
-from backend.dependencies.database import Base
-from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy import ForeignKey
 import os
-from sqlalchemy import event
+
+from sqlalchemy import ForeignKey, event
+from sqlalchemy.orm import Mapped, mapped_column
+
+from backend.dependencies.database import Base
+
 
 class Document(Base):
     __tablename__ = 'documents'

@@ -1,5 +1,7 @@
 from pydantic import BaseModel
+
 from backend.schemas.user_schema import UserResponse
+
 
 class ProjectCreate(BaseModel):
     name: str

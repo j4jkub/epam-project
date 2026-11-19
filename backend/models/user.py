@@ -1,9 +1,12 @@
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey, Enum as SQLEnum
-from sqlalchemy.sql import func
-from sqlalchemy.orm import Mapped, mapped_column
-from backend.dependencies.database import Base
-from datetime import datetime
 import enum
+from datetime import datetime
+
+from sqlalchemy import DateTime, ForeignKey
+from sqlalchemy import Enum as SQLEnum
+from sqlalchemy.orm import Mapped, mapped_column
+
+from backend.dependencies.database import Base
+
 
 class User(Base):
     __tablename__ = "users"

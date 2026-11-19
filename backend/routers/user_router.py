@@ -1,17 +1,13 @@
-from fastapi import APIRouter, Response
-
-from datetime import timedelta
-from fastapi import Depends, HTTPException, status, APIRouter
-from fastapi.security import OAuth2PasswordRequestForm
-
 from typing import Annotated
 
+from fastapi import APIRouter, Depends, Response
+from fastapi.security import OAuth2PasswordRequestForm
+
+from backend.dependencies.auth import get_current_active_user
+from backend.dependencies.database import db_dependency
 from backend.schemas.token_schema import Token
 from backend.schemas.user_schema import UserCreate, UserResponse
-from backend.dependencies.database import db_dependency
-from backend.dependencies.auth import get_password_hash, authenticate_user, create_access_token, get_current_active_user
 from backend.services.user_service import UserService
-from backend.models.user import User
 
 user_router = APIRouter()
 user_service = UserService()

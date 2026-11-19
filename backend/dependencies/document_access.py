@@ -1,12 +1,13 @@
-from fastapi import Depends, HTTPException, status
-from sqlalchemy.orm import Session
-
 from typing import Annotated
+
+from fastapi import Depends, HTTPException, status
+
 from backend.dependencies.auth import auth_dependency
 from backend.dependencies.database import db_dependency
-from backend.models.user import User, AccessType
-from backend.repositories.project_access_repository import ProjectAccessRepository
+from backend.models.user import AccessType
 from backend.repositories.document_repository import DocumentRepository
+from backend.repositories.project_access_repository import ProjectAccessRepository
+
 
 def require_project_access(*allowed_roles) -> AccessType:
 

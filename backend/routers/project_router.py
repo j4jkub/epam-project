@@ -1,16 +1,18 @@
 from fastapi import APIRouter, Response
 
-from backend.dependencies.database import db_dependency
 from backend.dependencies.auth import auth_dependency
-from backend.dependencies.project_access import require_project_owner, require_project_participant
-
+from backend.dependencies.database import db_dependency
+from backend.dependencies.project_access import (
+    require_project_owner,
+    require_project_participant,
+)
+from backend.schemas.project_schema import (
+    ProjectCreate,
+    ProjectDetailsResponse,
+    ProjectUpdate,
+)
 from backend.services.project_service import ProjectService
 from backend.services.user_service import UserService
-from backend.services.project_service import ProjectService
-
-
-from backend.schemas.project_schema import ProjectCreate, ProjectUpdate, ProjectDetailsResponse
-
 
 project_router = APIRouter()
 project_service = ProjectService()

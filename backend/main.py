@@ -2,10 +2,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from backend.routers.document_router import document_router
-from backend.routers.user_router import user_router
 from backend.routers.project_router import project_router
-from backend.dependencies.database import engine, Base
-
+from backend.routers.user_router import user_router
 
 app = FastAPI()
 app.include_router(prefix="/api", router=document_router, tags=['documents'])

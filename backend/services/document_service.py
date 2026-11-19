@@ -1,13 +1,15 @@
-from backend.repositories.document_repository import DocumentRepository
-from backend.repositories.project_repository import ProjectRepository
-from backend.models.document import Document
-from backend.schemas.document_schema import DocumentResponse
-
-from sqlalchemy.orm import Session
-from fastapi import APIRouter, HTTPException, UploadFile
-from fastapi.responses import FileResponse
 import os
 import shutil
+
+from fastapi import HTTPException, UploadFile
+from fastapi.responses import FileResponse
+from sqlalchemy.orm import Session
+
+from backend.models.document import Document
+from backend.repositories.document_repository import DocumentRepository
+from backend.repositories.project_repository import ProjectRepository
+from backend.schemas.document_schema import DocumentResponse
+
 
 class DocumentService:
     def __init__(self):
@@ -75,8 +77,6 @@ class DocumentService:
 
         with open(file_path, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
-
-        document
 
     def delete_file(
             self,

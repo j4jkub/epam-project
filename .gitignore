@@ -34,4 +34,7 @@ frontend/server/data
 
 .env.dev
 .env.dev.db
+.env.prod.db
+.env.prod
+
 docker-compose.yml

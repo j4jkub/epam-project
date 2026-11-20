@@ -82,3 +82,47 @@ jobs:
           context: ./frontend
           push: ${{ github.event_name == 'push' }}
           tags: ${{ steps.images.outputs.frontend }}:${{ github.sha }}
+
+          
+  deploy:
+      name: Deploy to MiniStack
+      needs: build
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      runs-on: ubuntu-latest
+      env:
+        AWS_ACCESS_KEY_ID: test
+        AWS_SECRET_ACCESS_KEY: test
+        AWS_DEFAULT_REGION: us-east-1
+        AWS_ENDPOINT_URL: ${{ secrets.MINISTACK_ENDPOINT || 'http://localhost:4566' }}
+
+      steps:
+        - name: Checkout repository
+          uses: actions/checkout@v4
+
+        - name: Start MiniStack (ephemeral)
+          if: ${{ secrets.MINISTACK_ENDPOINT == '' }}
+          run: |
+            docker run -d --name ministack -p 4566:4566 \
+              -v /var/run/docker.sock:/var/run/docker.sock \
+              ministackorg/ministack
+            for i in $(seq 1 30); do
+              curl -sf http://localhost:4566/_ministack/health && exit 0
+              sleep 2
+            done
+            docker logs ministack
+            exit 1
+
+        - name: Deploy infrastructure
+          run: |
+            # Replace with your real deploy step, e.g. Terraform:
+            # terraform -chdir=infra init
+            # terraform -chdir=infra apply -auto-approve \
+            #   -var "image_tag=${{ github.sha }}"
+            aws sts get-caller-identity
+
+        - name: Smoke test
+          run: |
+            curl -sf "$AWS_ENDPOINT_URL/_ministack/health"
+            # curl -sf <your deployed backend URL>/health
+
+

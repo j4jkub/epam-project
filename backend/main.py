@@ -5,10 +5,18 @@ from backend.dependencies.database import Base, engine
 from backend.routers.document_router import document_router
 from backend.routers.project_router import project_router
 from backend.routers.user_router import user_router
+from contextlib import asynccontextmanager
 
 import os
 
-app = FastAPI()
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    if engine is not None:                      # skipped in tests, where the fixture creates the tables
+        Base.metadata.create_all(bind=engine)
+    yield
+
+app = FastAPI(lifespan=lifespan)
+
 app.include_router(prefix="/api", router=document_router, tags=['documents'])
 app.include_router(prefix="/api", router=project_router, tags=['project'])
 app.include_router(prefix="/api", router=user_router, tags=['users'])
@@ -33,4 +41,4 @@ app.add_middleware(
 )
 
 # Base.metadata.drop_all(bind=engine)
-Base.metadata.create_all(bind=engine)
+# Base.metadata.create_all(bind=engine)

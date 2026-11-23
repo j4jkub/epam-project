@@ -1,9 +1,12 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from backend.dependencies.database import Base, engine
 from backend.routers.document_router import document_router
 from backend.routers.project_router import project_router
 from backend.routers.user_router import user_router
+
+import os
 
 app = FastAPI()
 app.include_router(prefix="/api", router=document_router, tags=['documents'])
@@ -17,6 +20,8 @@ origins = [
     "http://localhost",
     "http://127.0.0.1:5173",
     "http://127.0.0.1",
+    'http://localhost:4566',
+    os.getenv("FRONTEND_ORIGIN", "http://localhost:4566")
 ]
 
 app.add_middleware(
@@ -28,4 +33,4 @@ app.add_middleware(
 )
 
 # Base.metadata.drop_all(bind=engine)
-# Base.metadata.create_all(bind=engine)
+Base.metadata.create_all(bind=engine)

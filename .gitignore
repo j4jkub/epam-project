@@ -38,3 +38,7 @@ frontend/server/data
 .env.prod
 
 docker-compose.yml
+
+ministack
+deploy/taskdef.json
+docker-compose-old.yml

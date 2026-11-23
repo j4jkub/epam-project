@@ -9,7 +9,7 @@ export default defineConfig(({ mode }) => {
       port: 5173,
       proxy: {
         '/api': {
-          target: env.API_PROXY_TARGET || 'http://localhost:8000',
+          target: env.API_PROXY_TARGET || 'http://localhost:8000/api',
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/api/, ''),
         },
